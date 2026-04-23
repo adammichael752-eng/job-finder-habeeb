@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Navbar from './NavBar';
 import { supabase } from '../supabase';
 import {
-  Briefcase, Code2, Github, Linkedin, Mail, Globe,
+  Briefcase, Code2, Globe,
   Star, Send, CheckCircle, Loader2, Sparkles, Zap,
   Target, Shield, Bell, User, MessageSquare, Heart,
 } from 'lucide-react';
@@ -150,22 +150,14 @@ export default function About() {
                 <span style={{ fontSize: 10, fontWeight: 700, color: '#4ade80', letterSpacing: '0.1em', fontFamily: 'monospace' }}>AVAILABLE</span>
               </div>
 
-              {/* Social links */}
-              <div className="flex flex-col gap-2 w-full">
-                {[
-                  { icon: Github,   label: 'GitHub',   href: 'https://github.com/shahidkm',      color: '#e2e8f0' },
-                  { icon: Linkedin, label: 'LinkedIn',  href: 'https://linkedin.com/in/shahidkm', color: '#60a5fa' },
-                  { icon: Mail,     label: 'Email',     href: 'mailto:shahid@example.com',        color: '#4ade80' },
-                ].map(({ icon: Icon, label, href, color }) => (
-                  <a key={label} href={href} target="_blank" rel="noreferrer"
-                    className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all"
-                    style={{ background: color + '0d', border: `1px solid ${color}20`, color, minWidth: 130, textDecoration: 'none' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = color + '1a'; e.currentTarget.style.transform = 'translateX(4px)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = color + '0d'; e.currentTarget.style.transform = 'translateX(0)'; }}>
-                    <Icon size={13} />{label}
-                  </a>
-                ))}
-              </div>
+              {/* Portfolio link */}
+              <a href="https://muhammed-shahid-km.vercel.app/" target="_blank" rel="noreferrer"
+                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-xs font-bold transition-all"
+                style={{ background: 'rgba(167,139,250,0.12)', border: '1px solid rgba(167,139,250,0.3)', color: '#a78bfa', textDecoration: 'none', minWidth: 130 }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(167,139,250,0.22)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(167,139,250,0.2)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(167,139,250,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
+                <Globe size={13} /> Know More
+              </a>
             </div>
 
             {/* Right — bio */}
