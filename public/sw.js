@@ -7,8 +7,8 @@ self.addEventListener('push', (event) => {
 
   const options = {
     body: data.body || 'You have pending tasks',
-    icon: '/icon-512.png',
-    badge: '/icon-192.png',
+    icon: '/App-Icon.png',
+    badge: '/App-Icon.png',
     tag,
     renotify: true,
     requireInteraction: tag === 'overdue-friends',
