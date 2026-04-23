@@ -9,7 +9,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs
 
 const JSEARCH_KEY = '3b004fa645msh31b77e85f3f90b8p1b4dbbjsnd0b778c247d5';
 const GROQ_KEY = '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';
-const SUPABASE_URL = 'https://tffpqsnftcmardsiafs x.supabase.co';
+const SUPABASE_URL = 'https://tffpqsnftcmardsiafsx.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRmZnBxc25mdGNtYXJkc2lhZnN4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NjAyNDYsImV4cCI6MjA5MjMzNjI0Nn0.92q7yanCAriXqTKG2FZuRYS_CzE2m5y-zp3WQVcHe5o';
 
 const sendPushNotification = async (title, body) => {
