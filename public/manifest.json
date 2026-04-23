@@ -1,0 +1,28 @@
+{
+  "name": "Self-Development App",
+  "short_name": "SDA",
+  "start_url": "/",
+  "display": "standalone",
+  "display_override": ["standalone"],
+  "id": "/",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/App-Icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/App-Icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/App-Icon.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
