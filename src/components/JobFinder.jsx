@@ -33,18 +33,38 @@ const STATUS_COLORS = {
   rejected:   { bg: 'rgba(248,113,113,0.15)', border: 'rgba(248,113,113,0.4)', text: '#f87171', label: 'Rejected' },
 };
 
-async function callGroq(prompt) {
+async function callGroq(prompt, onLimitExceeded) {
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}` },
     body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages: [{ role: 'user', content: prompt }], max_tokens: 800 }),
   });
+  if (!res.ok) { onLimitExceeded?.(); throw new Error(`Groq API error: ${res.status}`); }
   const json = await res.json();
   return json.choices[0].message.content;
 }
 
+function UpgradeModal({ onClose }) {
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center" style={{ background: 'rgba(2,6,23,0.92)', backdropFilter: 'blur(12px)' }}>
+      <div className="rounded-3xl p-8 text-center max-w-sm w-full mx-4" style={GLASS}>
+        <div className="text-5xl mb-4">🚫</div>
+        <h2 className="text-xl font-black text-white mb-2 uppercase tracking-widest">Contract Exceeded</h2>
+        <p className="text-slate-400 text-sm mb-1">Your plan limit has been reached.</p>
+        <p className="text-slate-500 text-xs mb-6">Please upgrade your plan to continue using this feature.</p>
+        <button onClick={onClose}
+          className="w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all"
+          style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#475569' }}>
+          Dismiss
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function JobFinder() {
   const [tab, setTab] = useState('search');
+  const [upgradeModal, setUpgradeModal] = useState(false);
   const [query, setQuery] = useState('');
   const [location, setLocation] = useState('');
   const [jobs, setJobs] = useState([]);
@@ -130,6 +150,7 @@ export default function JobFinder() {
       const res = await fetch(`https://jsearch.p.rapidapi.com/search?query=${encodeURIComponent(q)}&page=1&num_pages=2&date_posted=all`, {
         headers: { 'x-rapidapi-key': JSEARCH_KEY, 'x-rapidapi-host': 'jsearch.p.rapidapi.com', 'Content-Type': 'application/json' },
       });
+      if (!res.ok) { setUpgradeModal(true); setSearching(false); return; }
       const json = await res.json();
       const seen = new Set();
       const unique = (json.data || []).filter(j => {
@@ -159,10 +180,10 @@ ${profile?.base_cover_letter ? `My Base Cover Letter (customize this):\n${profil
 ${profile?.full_name ? `My Name: ${profile.full_name}` : ''}
 
 Write a compelling, personalized cover letter in 3 paragraphs tailored to this specific job. Be professional and enthusiastic.`;
-      const cl = await callGroq(prompt);
+      const cl = await callGroq(prompt, () => setUpgradeModal(true));
       setCoverLetter(cl);
     } catch (e) {
-      alert('Failed to generate cover letter: ' + e.message);
+      if (!e.message.includes('Groq API error')) alert('Failed to generate cover letter: ' + e.message);
     }
     setGeneratingCL(false);
   };
@@ -180,7 +201,7 @@ Description: ${(job.job_description || '').slice(0, 600)}
 ${profile?.resume_text ? `My Resume: ${profile.resume_text.slice(0, 400)}` : ''}
 ${profile?.full_name ? `My Name: ${profile.full_name}` : ''}
 Write a compelling 3-paragraph cover letter.`;
-        cl = await callGroq(prompt);
+        cl = await callGroq(prompt, () => setUpgradeModal(true));
         setCoverLetter(cl);
       } catch (e) { cl = profile?.base_cover_letter || ''; }
       setGeneratingCL(false);
@@ -256,7 +277,7 @@ Write a compelling 3-paragraph cover letter.`;
         if (useAiCoverLetter) {
           try {
             const prompt = `Write a short professional cover letter for:\nJob: ${job.job_title} at ${job.employer_name}\nDescription: ${(job.job_description || '').slice(0, 500)}\n${profile?.full_name ? `Applicant: ${profile.full_name}` : ''}\n${profile?.resume_text ? `Skills: ${profile.resume_text.slice(0, 300)}` : ''}\n3 paragraphs only.`;
-            cl = await callGroq(prompt);
+            cl = await callGroq(prompt, () => setUpgradeModal(true));
           } catch (groqErr) { cl = profile?.base_cover_letter || ''; }
         }
         const { error } = await supabase.from('job_applications').insert({
@@ -305,6 +326,7 @@ Write a compelling 3-paragraph cover letter.`;
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-200">
+      {upgradeModal && <UpgradeModal onClose={() => setUpgradeModal(false)} />}
       <Navbar />
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-[-10%] left-[-5%] w-[35%] h-[35%] rounded-full bg-indigo-900/20 blur-[120px]" />
@@ -380,6 +402,7 @@ Write a compelling 3-paragraph cover letter.`;
                     form.append('file', file);
                     form.append('upload_preset', 'Job-App');
                     const res = await fetch('https://api.cloudinary.com/v1_1/dfyfxy9m7/raw/upload', { method: 'POST', body: form });
+                    if (!res.ok) { setUpgradeModal(true); return; }
                     const data = await res.json();
                     if (data.secure_url) {
                       setResumeUrl(data.secure_url);
