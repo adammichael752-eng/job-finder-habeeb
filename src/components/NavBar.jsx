@@ -249,7 +249,7 @@ export default function Navbar() {
           <div style={{ maxWidth: 1440, margin: "0 auto", padding: "0 20px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 62, gap: 12 }}>
 
             {/* Logo */}
-            <span className="nb-logo" onClick={() => go("/")}>◈ SHAHID KM</span>
+            <span className="nb-logo" onClick={() => go("/")}>◈ JOB FINDER</span>
 
             {/* Desktop nav */}
             <div className="nb-desktop" style={{ display: "flex", alignItems: "center", gap: 2 }}>
